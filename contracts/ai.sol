@@ -22,7 +22,7 @@ contract StakingContract is Ownable, ReentrancyGuard, Pausable {
     uint256 public totalStaked;//self explanatory
     
     // Staking duration
-    uint256 public stakingDuration = 2 minutes;//changed to shorter for testing
+    uint256 public stakingDuration = 1 minutes;//changed to shorter for testing
     
     // Maps
     mapping(address => uint256) public stakedBalance;//user id and staked amount
