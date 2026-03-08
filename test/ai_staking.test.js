@@ -202,7 +202,7 @@ describe("Test AIStaking", function(){
 
         });
 
-         it("Should let user successfully withdraw tokens", async function(){
+        it("Should let user successfully withdraw tokens", async function(){
             stackAmount = ethers.parseEther("10"); 
             withdrawAmount = ethers.parseEther("5");
 
@@ -229,6 +229,23 @@ describe("Test AIStaking", function(){
             expect(newUserBalance).to.equal(withdrawAmount);
 
             await expect(withdraw).to.emit(ai_stacking, "Withdrawn").withArgs(stacker1.getAddress(), withdrawAmount);
+
+        });
+
+        it("Should revert if user tries to withdraw more than they have", async function(){
+            stackAmount = ethers.parseEther("10"); 
+            withdrawAmount = ethers.parseEther("25");
+
+            await wtc_stacking_token.transfer(stacker1.getAddress(), stackAmount);
+
+            await wtc_stacking_token.connect(stacker1).approve(ai_stacking.getAddress(), stackAmount);
+
+            await ai_stacking.connect(stacker1).stake(stackAmount);
+
+            await increaseTime(61);
+
+            await expect(ai_stacking.connect(stacker1).withdraw(withdrawAmount)).to.be.revertedWith("Insufficient balance");
+
 
         });
     });
