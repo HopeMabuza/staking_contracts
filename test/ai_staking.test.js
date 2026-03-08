@@ -248,6 +248,159 @@ describe("Test AIStaking", function(){
 
 
         });
+        
     });
+
+    describe("Get rewards", function(){
+        it("Should successfully get rewards", async function(){
+            stackAmount = ethers.parseEther("10"); 
+
+            await wtc_stacking_token.transfer(stacker1.getAddress(), stackAmount);
+
+            await wtc_stacking_token.connect(stacker1).approve(ai_stacking.getAddress(), stackAmount);
+
+            await ai_stacking.connect(stacker1).stake(stackAmount);
+
+            await increaseTime(61);
+
+            await ai_stacking.connect(stacker1).getReward();
+
+            
+            const rewardsAfter = await ai_stacking.earned(stacker1.getAddress());
+            expect(rewardsAfter).to.equal(0);
+
+        });
+
+        it("Should claim with 0 rewards", async function(){
+            stackAmount = ethers.parseEther("10");
+
+            await wtc_stacking_token.transfer(stacker1.getAddress(), stackAmount);
+            await wtc_stacking_token.connect(stacker1).approve(ai_stacking.getAddress(), stackAmount);
+            await ai_stacking.connect(stacker1).stake(stackAmount);
+
+            const rewards = await ai_stacking.earned(stacker1.getAddress());
+            expect(rewards).to.equal(0);
+
+            const getRewards = await ai_stacking.connect(stacker1).getReward();
+            
+            const receipt = await getRewards.wait();
+            
+            const rewardsAfter = await ai_stacking.earned(stacker1.getAddress());
+            expect(rewardsAfter).to.equal(0);
+        });
+
+    });
+
+    
+    describe("Set Reward Rate", function(){
+        it("Should allow owner to set reward rate successfully", async function(){
+            const newRewardRate = ethers.parseEther("0.02");
+            
+            await expect(ai_stacking.connect(owner).setRewardRate(newRewardRate)).to.emit(ai_stacking, "RewardRateUpdated").withArgs(newRewardRate);
+            
+            const updatedRate = await ai_stacking.rewardRate();
+            expect(updatedRate).to.equal(newRewardRate);
+        });
+
+        it("Should revert when user set new reward rate", async function(){
+            const newRewardRate = ethers.parseEther("0.02");
+            
+            await expect(ai_stacking.connect(stacker1).setRewardRate(newRewardRate)).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+    });
+
+    describe("Set Staking Duration", function(){
+        it("Should allow owner to set staking duration", async function(){
+            const newDuration = 1800; //in seconds
+            
+            await expect(ai_stacking.connect(owner).setStakingDuration(newDuration)).to.emit(ai_stacking, "StakingDurationUpdated").withArgs(newDuration);
+            
+            const updatedDuration = await ai_stacking.stakingDuration();
+            expect(updatedDuration).to.equal(newDuration);
+        });
+
+        it("Should revert when user tried to set staking duration", async function(){
+            const newDuration = 1800;
+            
+            await expect(ai_stacking.connect(stacker1).setStakingDuration(newDuration)).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+    });
+
+    describe("Pause/Unpause", function(){
+        it("Should allow owner to pause staking", async function(){
+
+            await expect(ai_stacking.connect(owner).pause()).to.emit(ai_stacking, "Paused").withArgs(owner.address);
+            expect(await ai_stacking.paused()).to.equal(true);
+     
+        });
+
+        it("Should revert when user calls pause", async function(){
+
+            await expect(ai_stacking.connect(stacker1).pause()).to.be.revertedWith("Ownable: caller is not the owner");
+
+            expect(await ai_stacking.paused()).to.equal(false);
+        });       
+      
+    });
+
+    describe("Fund Rewards", function(){
+        it("Should allow owner to fund rewards", async function(){
+            const fundAmount = ethers.parseEther("100");
+            
+            await wtc_stacking_token.transfer(owner.getAddress(), fundAmount);
+
+            await wtc_stacking_token.connect(owner).approve(ai_stacking.getAddress(), fundAmount);
+          
+            const initialBalance = await wtc_stacking_token.balanceOf(ai_stacking.getAddress());
+            
+      
+            await expect(ai_stacking.connect(owner).fundRewards(fundAmount)).to.not.emit(ai_stacking, "RewardPaid"); 
+            
+            const newBalance = await wtc_stacking_token.balanceOf(ai_stacking.getAddress());
+            expect(newBalance).to.equal(initialBalance + fundAmount);
+        });
+
+        it("Should revert when user tries to call  fund rewards", async function(){
+            const fundAmount = ethers.parseEther("10");
+            
+            await wtc_stacking_token.transfer(stacker1.getAddress(), fundAmount);
+        
+            await wtc_stacking_token.connect(stacker1).approve(ai_stacking.getAddress(), fundAmount);
+            
+            await expect(ai_stacking.connect(stacker1).fundRewards(fundAmount)).to.be.revertedWith("Ownable: caller is not the owner");
+            
+        });
+    });
+
+    describe("Emergency Withdraw", function(){
+        it("Should allow user to emergency withdraw", async function(){
+
+            stackAmount = ethers.parseEther("10");
+            await wtc_stacking_token.transfer(stacker1.getAddress(), stackAmount);
+            await wtc_stacking_token.connect(stacker1).approve(ai_stacking.getAddress(), stackAmount);
+            await ai_stacking.connect(stacker1).stake(stackAmount);
+            
+            await increaseTime(60);
+            
+            // Get user balance before emergency withdraw
+            const userBalanceBefore = await wtc_stacking_token.balanceOf(stacker1.getAddress());
+            const stakedBalance = await ai_stacking.stakedBalance(stacker1.getAddress());
+            
+            // Emergency withdraw
+            await expect(ai_stacking.connect(stacker1).emergencyWithdraw()).to.emit(ai_stacking, "Withdrawn").withArgs(stacker1.getAddress(), stakedBalance);
+            
+            // Verify user got tokens back
+            const userBalanceAfter = await wtc_stacking_token.balanceOf(stacker1.getAddress());
+            expect(userBalanceAfter).to.equal(userBalanceBefore + stakedBalance);
+            
+            // Verify staked balance is 0
+            expect(await ai_stacking.stakedBalance(stacker1.getAddress())).to.equal(0);
+            
+            // Verify total staked decreased
+            expect(await ai_stacking.totalStaked()).to.equal(0);
+            
+        });
+    });
+
 
 });
