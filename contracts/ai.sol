@@ -11,23 +11,24 @@ contract StakingContract is Ownable, ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20;
 
     // Tokens
+    //initializes tokens from IERC20 interface
     IERC20 public stakingToken;
     IERC20 public rewardToken;
 
     // Staking variables
-    uint256 public rewardRate;
-    uint256 public lastUpdateTime;
-    uint256 public rewardPerTokenStored;
-    uint256 public totalStaked;
+    uint256 public rewardRate;//percentage of reward
+    uint256 public lastUpdateTime;//assuming it is the last time the user staked
+    uint256 public rewardPerTokenStored;//self explanatory
+    uint256 public totalStaked;//self explanatory
     
     // Staking duration
-    uint256 public stakingDuration = 30 days;
+    uint256 public stakingDuration = 2 minutes;//changed to shorter for testing
     
     // Maps
-    mapping(address => uint256) public stakedBalance;
-    mapping(address => uint256) public userRewardPerTokenPaid;
-    mapping(address => uint256) public rewards;
-    mapping(address => uint256) public stakingTimestamp;
+    mapping(address => uint256) public stakedBalance;//user id and staked amount
+    mapping(address => uint256) public userRewardPerTokenPaid;//user id and reward amount
+    mapping(address => uint256) public rewards;//user id and reward 
+    mapping(address => uint256) public stakingTimestamp;//user id and the time stamp of the staking
 
     // Events
     event Staked(address indexed user, uint256 amount);
@@ -37,17 +38,24 @@ contract StakingContract is Ownable, ReentrancyGuard, Pausable {
     event StakingDurationUpdated(uint256 newDuration);
 
     constructor(
-        address _stakingToken,
-        address _rewardToken,
-        uint256 _rewardRate
+        address _stakingToken,//takes token address created for staking
+        address _rewardToken,//takes token address created for rewards 
+        uint256 _rewardRate//what is the reward rate?
     ) {
+        //checks if the token address are not zero address, they are valid addresses
         require(_stakingToken != address(0), "Invalid staking token");
         require(_rewardToken != address(0), "Invalid reward token");
         
+        //checks if the contract follows the ERC20 interface then assigns it to the state variables
         stakingToken = IERC20(_stakingToken);
         rewardToken = IERC20(_rewardToken);
+
+        //how many token distributed to  stackers in a second
         rewardRate = _rewardRate;
+
+        //to calculate the rewards of stakers
         lastUpdateTime = block.timestamp;
+        
     }
 
     // Modifier to update rewards
