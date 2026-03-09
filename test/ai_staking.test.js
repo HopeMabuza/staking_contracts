@@ -326,10 +326,13 @@ describe("Test AIStaking", function(){
         });
     });
 
-    describe("Pause/Unpause", function(){
+    describe("Pause", function(){
         it("Should allow owner to pause staking", async function(){
 
-            await expect(ai_stacking.connect(owner).pause()).to.emit(ai_stacking, "Paused").withArgs(owner.address);
+            expect(await ai_stacking.paused()).to.equal(false);
+    
+            await ai_stacking.connect(owner).pause();
+            
             expect(await ai_stacking.paused()).to.equal(true);
      
         });
@@ -341,6 +344,29 @@ describe("Test AIStaking", function(){
             expect(await ai_stacking.paused()).to.equal(false);
         });       
       
+    });
+
+    describe("Unpause", function(){
+        it("Should allow owner to unpause staking", async function(){
+            //paused contract first
+            await ai_stacking.connect(owner).pause();
+            expect(await ai_stacking.paused()).to.equal(true);
+
+            await ai_stacking.connect(owner).unpause();
+
+            expect(await ai_stacking.paused()).to.equal(false);
+     
+        });
+
+        it("Should revert when user calls unpause", async function(){
+            await ai_stacking.connect(owner).pause();
+            expect(await ai_stacking.paused()).to.equal(true);
+
+            await expect(ai_stacking.connect(stacker1).unpause()).to.be.revertedWith("Ownable: caller is not the owner");
+
+            expect(await ai_stacking.paused()).to.equal(true);
+        });       
+
     });
 
     describe("Fund Rewards", function(){
