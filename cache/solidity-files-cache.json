@@ -9,7 +9,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -25,9 +25,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -53,7 +50,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -69,9 +66,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -93,7 +87,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -109,9 +103,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -131,7 +122,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -147,9 +138,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -171,7 +159,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -187,9 +175,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -209,7 +194,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -225,9 +210,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -251,7 +233,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -267,9 +249,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -289,7 +268,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -305,9 +284,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -327,7 +303,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -343,9 +319,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -365,7 +338,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -381,9 +354,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -405,7 +375,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -421,9 +391,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -447,7 +414,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -463,9 +430,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -488,7 +452,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -504,9 +468,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -530,7 +491,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -546,9 +507,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -566,14 +524,14 @@
       ]
     },
     "/home/wtc/Documents/Workshops/staking_contracts/contracts/time.sol": {
-      "lastModificationDate": 1772990180652,
+      "lastModificationDate": 1773070983191,
       "contentHash": "8bb148acb5976fdaa46c7ea4f930d533",
       "sourceName": "contracts/time.sol",
       "solcConfig": {
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -589,15 +547,185 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
       "imports": [],
       "versionPragmas": [],
       "artifacts": []
+    },
+    "/home/wtc/Documents/Workshops/staking_contracts/contracts/My_Staking_Contract.sol": {
+      "lastModificationDate": 1773071116538,
+      "contentHash": "91ae49941fdaec17025742d913597251",
+      "sourceName": "contracts/My_Staking_Contract.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/security/Pausable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "My_Staking_Contract"
+      ]
+    },
+    "/home/wtc/Documents/Workshops/staking_contracts/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+      "lastModificationDate": 1772914773107,
+      "contentHash": "48de4c9a3a4ae5ef66a2aa620843413f",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../utils/introspection/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721"
+      ]
+    },
+    "/home/wtc/Documents/Workshops/staking_contracts/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1772914773099,
+      "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "/home/wtc/Documents/Workshops/staking_contracts/contracts/NFT.sol": {
+      "lastModificationDate": 1773062674985,
+      "contentHash": "e7e3b8a7372b5a10d1e926095041257a",
+      "sourceName": "contracts/NFT.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "Address",
+        "Context",
+        "ERC165",
+        "ERC721",
+        "ERC721Enumerable",
+        "IERC165",
+        "IERC721",
+        "IERC721Enumerable",
+        "IERC721Metadata",
+        "IERC721Receiver",
+        "NFT",
+        "Ownable",
+        "Strings"
+      ]
     }
   }
 }
