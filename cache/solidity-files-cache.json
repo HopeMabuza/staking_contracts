@@ -9,7 +9,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -25,6 +25,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -50,7 +53,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -66,6 +69,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -87,7 +93,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -103,6 +109,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -122,7 +131,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -138,6 +147,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -159,7 +171,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -175,6 +187,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -194,7 +209,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -210,6 +225,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -233,7 +251,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -249,6 +267,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -268,7 +289,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -284,6 +305,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -303,7 +327,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -319,6 +343,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -338,7 +365,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -354,6 +381,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -375,7 +405,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -391,6 +421,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -414,7 +447,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -430,6 +463,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -452,7 +488,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -468,6 +504,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -491,7 +530,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -507,6 +546,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -531,7 +573,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "outputSelection": {
@@ -547,6 +589,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
