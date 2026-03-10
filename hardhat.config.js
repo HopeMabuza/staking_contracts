@@ -1,6 +1,4 @@
 require("@nomicfoundation/hardhat-toolbox");
-
-
 require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -13,6 +11,11 @@ module.exports = {
     hardhat: {
       // For local testing
     },
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: [process.env.ADMIN_PRIVATE_KEY],
+      chainId: 11155111
+    }
   },
   solidity: {
     version: "0.8.19",
@@ -23,5 +26,7 @@ module.exports = {
       },
     },
   },
-
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
+  }
 };
