@@ -110,7 +110,6 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
     // Withdraw a specific staked NFT after cooling period
     // parameter:  tokenId The ID of the NFT to withdraw
     function withdraw(uint256 tokenId) public nonReentrant whenNotPaused updateReward(msg.sender){
-        require(tokenOwner[tokenId] == msg.sender, "Not your NFT");
         require(block.timestamp >= userInfo[msg.sender].stakedAt + coolTime, "Still locked");
         
         _withdrawSingle(msg.sender, tokenId);
@@ -126,6 +125,7 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
             rewardToken.safeTransfer(msg.sender, reward);
             emit RewardsClaimed(msg.sender, reward);
         }
+        reward = 0;
     }
 
     // Withdraw a specific NFT and claim rewards in one transaction

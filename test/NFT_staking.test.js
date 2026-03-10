@@ -97,29 +97,226 @@ describe("Test NFT Staking", function(){
             const tokenIds = await mintNFTs(staker1, 1);
             await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
             await nftStaking.connect(staker1).stake(tokenIds[0]);
-            expe
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(0);
+            expect(await nftStaking.totalStaked()).to.equal(1);
 
             await increaseTime(3600);
 
             await nftStaking.connect(staker1).withdraw(tokenIds[0]);
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(1);
+            expect(await nftStaking.totalStaked()).to.equal(0);
+            
+        });
 
+        it("Should revert when user tries to withdraw before the coolTime", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(0);
+            expect(await nftStaking.totalStaked()).to.equal(1);
 
+            await expect(nftStaking.connect(staker1).withdraw(tokenIds[0])).to.be.revertedWith("Still locked");
+            
+        });
 
+        it("Should revert when non owner of NFT tries to stake", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
 
+            await expect(nftStaking.connect(staker2).stake(tokenIds[0])).to.be.revertedWith("ERC721: transfer of token that is not own");
+            
+        });
 
-        })
+        it("Should allow user to emergency withdraw without coolTime", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(0);
+            expect(await nftStaking.totalStaked()).to.equal(1);
+
+            await nftStaking.connect(staker1).emergencyWithdraw(tokenIds[0]);
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(1);
+            expect(await nftStaking.totalStaked()).to.equal(0);
+            
+        });
+
+        it("Should revert when non owner tries to emergency withdraw", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+
+            await expect(nftStaking.connect(staker2).emergencyWithdraw(tokenIds[0])).to.be.revertedWith("Not your NFT");
+            
+        });
+
+        it("Should reset rewards to 0 on emergency withdraw", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+
+            await increaseTime(200);
+            const rewards = await nftStaking.calculateRewards(staker1.address);
+            expect(rewards).to.be.gte(200);
+
+            await nftStaking.connect(staker1).emergencyWithdraw(tokenIds[0]);
+            const userInfoAfter = await nftStaking.userInfo(staker1.address);
+            expect(userInfoAfter.rewards).to.equal(0);
+            
+        });
         
-    })
+    });
 
-    // describe("Claiming Rewards", function(){
-    //     beforeEach(async function(){
-    //         // Setup: mint and stake NFTs for staker1
-    //         const tokenIds = await mintNFTs(staker1, 2);
-    //         await stakeNFTs(staker1, tokenIds);
-    //     });
+    describe("Withdraw and Claim", function(){
+        it("Should withdraw staked NFT and claim rewards in one transaction", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(0);
 
-    //     it("Should allow user to claim rewards after staking", async function(){
-    //         // Add your claim test here
-    //     });
-    // });
+            await increaseTime(120);
+
+            const balanceBefore = await rewardToken.balanceOf(staker1.address);
+            await nftStaking.connect(staker1).withdrawAndClaim(tokenIds[0]);
+            const balanceAfter = await rewardToken.balanceOf(staker1.address);
+
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(1);
+            expect(await nftStaking.totalStaked()).to.equal(0);
+            expect(balanceAfter - balanceBefore).to.be.gte(120);
+        });
+
+        it("Should revert when trying to withdrawAndClaim before coolTime", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+
+            await expect(nftStaking.connect(staker1).withdrawAndClaim(tokenIds[0])).to.be.revertedWith("Still locked");
+            
+        });
+    });
+
+    describe("Claiming Rewards", function(){
+        it("Should allow user to claim rewards after staking", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+            expect(await nft.balanceOf(staker1.getAddress())).to.equal(0);
+            expect(await nftStaking.totalStaked()).to.equal(1);
+
+            await increaseTime(120);
+            const calculatedRewards = await nftStaking.calculateRewards(staker1.address);
+            expect(calculatedRewards).to.be.gte(120);
+
+            const balanceBefore = await rewardToken.balanceOf(staker1.address);
+            await nftStaking.connect(staker1).claimRewards();
+            const balanceAfter = await rewardToken.balanceOf(staker1.address);
+            expect(balanceAfter - balanceBefore).to.be.gte(120);
+            
+            const userRewardsAfter = await nftStaking.userInfo(staker1.address);
+            expect(userRewardsAfter.rewards).to.equal(0);          
+        });
+
+        it("Should successfully claim rewards and transfer tokens to user", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+
+            await increaseTime(300);
+            const balanceBefore = await rewardToken.balanceOf(staker1.address);
+
+            await nftStaking.connect(staker1).claimRewards();
+            
+            const balanceAfter = await rewardToken.balanceOf(staker1.address);
+            expect(balanceAfter - balanceBefore).to.be.gte(300);
+        });
+
+        it("Should return 0 rewards when claiming immediately after staking", async function(){
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+
+            const balanceBefore = await rewardToken.balanceOf(staker1.address);
+            await nftStaking.connect(staker1).claimRewards();
+            const balanceAfter = await rewardToken.balanceOf(staker1.address);
+            
+            expect(balanceAfter - balanceBefore).to.be.lte(1);
+        });
+    });
+
+    describe("Owner Functions", function(){
+        it("Should allow owner to set reward rate", async function(){
+            const newRewardRate = ethers.parseEther("2");
+            await nftStaking.connect(owner).setRewardRate(newRewardRate);
+            
+            const currentRate = await nftStaking.rewardRate();
+            expect(currentRate).to.equal(newRewardRate);
+        });
+
+        it("Should revert when non-owner tries to set reward rate", async function(){
+            const newRewardRate = ethers.parseEther("2");
+            
+            await expect(nftStaking.connect(staker1).setRewardRate(newRewardRate)).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+        it("Should allow owner to set cool time", async function(){
+            const newCoolTime = 60;
+            await nftStaking.connect(owner).setCoolTime(newCoolTime);
+            
+            const currentCoolTime = await nftStaking.coolTime();
+            expect(currentCoolTime).to.equal(newCoolTime);
+        });
+
+        it("Should revert when non-owner tries to set cool time", async function(){
+            const newCoolTime = 60;
+            
+            await expect(nftStaking.connect(staker1).setCoolTime(newCoolTime)).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+        it("Should allow owner to fund rewards", async function(){
+            const fundAmount = ethers.parseEther("1000");
+            await rewardToken.connect(owner).approve(nftStaking.target, fundAmount);
+            
+            const balanceBefore = await rewardToken.balanceOf(nftStaking.target);
+            await nftStaking.connect(owner).fundRewards(fundAmount);
+            const balanceAfter = await rewardToken.balanceOf(nftStaking.target);
+            
+            expect(balanceAfter - balanceBefore).to.equal(fundAmount);
+        });
+
+        it("Should revert when non-owner tries to fund rewards", async function(){
+            const fundAmount = ethers.parseEther("1000");
+            await rewardToken.connect(staker1).approve(nftStaking.target, fundAmount);
+            
+            await expect(nftStaking.connect(staker1).fundRewards(fundAmount)).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+        it("Should allow owner to pause the contract", async function(){
+            await nftStaking.connect(owner).pause();
+            
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            
+            await expect(nftStaking.connect(staker1).stake(tokenIds[0])).to.be.revertedWith("Pausable: paused");
+        });
+
+        it("Should revert when non-owner tries to pause", async function(){
+            await expect(nftStaking.connect(staker1).pause()).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+
+        it("Should allow owner to unpause the contract", async function(){
+            await nftStaking.connect(owner).pause();
+            await nftStaking.connect(owner).unpause();
+            
+            const tokenIds = await mintNFTs(staker1, 1);
+            await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
+            
+            await nftStaking.connect(staker1).stake(tokenIds[0]);
+            expect(await nftStaking.totalStaked()).to.equal(1);
+        });
+
+        it("Should revert when non-owner tries to unpause", async function(){
+            await nftStaking.connect(owner).pause();
+            
+            await expect(nftStaking.connect(staker1).unpause()).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+    });
 });
