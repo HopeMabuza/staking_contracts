@@ -9,7 +9,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -25,9 +25,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -53,7 +50,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -69,9 +66,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -93,7 +87,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -109,9 +103,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -131,7 +122,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -147,9 +138,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -171,7 +159,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -187,9 +175,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -209,7 +194,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -225,9 +210,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -251,7 +233,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -267,9 +249,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -289,7 +268,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -305,9 +284,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -327,7 +303,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -343,9 +319,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -365,7 +338,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -381,9 +354,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -405,7 +375,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -421,9 +391,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -447,7 +414,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -463,9 +430,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -488,7 +452,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -504,9 +468,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -530,7 +491,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -546,9 +507,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -573,7 +531,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -589,9 +547,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -600,14 +555,14 @@
       "artifacts": []
     },
     "/home/wtc/Documents/Workshops/staking_contracts/contracts/My_Staking_Contract.sol": {
-      "lastModificationDate": 1773148572214,
-      "contentHash": "c29134ae259e5ca5bd5ef87578b1375c",
+      "lastModificationDate": 1773220204658,
+      "contentHash": "7851f8e4782657dae0c76cbdf8c779b7",
       "sourceName": "contracts/My_Staking_Contract.sol",
       "solcConfig": {
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -623,9 +578,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -653,7 +605,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -669,9 +621,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -693,7 +642,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -709,9 +658,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -724,14 +670,14 @@
       ]
     },
     "/home/wtc/Documents/Workshops/staking_contracts/contracts/NFT.sol": {
-      "lastModificationDate": 1773062674985,
-      "contentHash": "e7e3b8a7372b5a10d1e926095041257a",
+      "lastModificationDate": 1773215351942,
+      "contentHash": "ea16e839cb9824c682e6db486deb3731",
       "sourceName": "contracts/NFT.sol",
       "solcConfig": {
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -747,9 +693,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -793,7 +736,7 @@
         "version": "0.8.19",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 1000
           },
           "outputSelection": {
@@ -809,9 +752,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },

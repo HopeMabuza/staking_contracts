@@ -154,6 +154,8 @@ describe("Test NFT Staking", function(){
             await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
             await nftStaking.connect(staker1).stake(tokenIds[0]);
 
+            console.log(`Balance, $${await nft.balanceOf(await nftStaking.getAddress())}`);
+
             await increaseTime(200);
             const rewards = await nftStaking.calculateRewards(staker1.address);
             expect(rewards).to.be.gte(200);
@@ -230,6 +232,8 @@ describe("Test NFT Staking", function(){
         });
 
         it("Should return 0 rewards when claiming immediately after staking", async function(){
+            await nftStaking.connect(owner).setRewardRate(1);
+
             const tokenIds = await mintNFTs(staker1, 1);
             await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
             await nftStaking.connect(staker1).stake(tokenIds[0]);

@@ -1,28 +1,35 @@
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
+
+
 
 //imports
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";//import for nft
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol"; //import for nft
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";//to be able to transfer tokens
-
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol"; //to be able to transfer tokens
 
 // I want to use the ai contract because it is easy to folllow, but I want to use the time contract because it is more secure
 //user stakes NFT and after cooling time, user earns rewards, tokens or NFTs?
 //simple route, stake NFT and get tokens as rewards, also considering rewarding ERC1155 NFTs in the future
 
-contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Receiver{
+contract My_Staking_Contract is
+    Ownable,
+    ReentrancyGuard,
+    Pausable,
+    IERC721Receiver
+{
     using SafeERC20 for IERC20;
 
     IERC20 public rewardToken;
     IERC721 public stakingNFT;
 
     //user info
-    struct User{
+    struct User {
         uint256[] stakedTokenIds;
         uint256 rewards;
         uint256 lastClaimTime;
@@ -30,12 +37,12 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
     }
 
     mapping(address => User) public userInfo;
-    mapping(uint256 => address) public tokenOwner; 
+    mapping(uint256 => address) public tokenOwner;
 
     //contract info
     uint256 public totalStaked;
-    uint256 public  coolTime = 2 minutes; 
-    uint256 public  rewardRate = 1e18; // Fixed reward rate
+    uint256 public coolTime = 2 minutes;
+    uint256 public rewardRate = 0.0013888e18; // Fixed reward rate
 
     //events
     event Staked(address indexed user, uint256 tokenId);
@@ -44,15 +51,10 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
     event RewardRateUpdated(uint256 newRate);
     event StakingDurationUpdated(uint256 newDuration);
 
-    
-
-    constructor(
-        address _stakingNFT,
-        address _rewardToken
-    ) Ownable() {
+    constructor(address _stakingNFT, address _rewardToken) Ownable() {
         require(_stakingNFT != address(0), "Invalid staking token");
         require(_rewardToken != address(0), "Invalid reward token");
-        
+
         stakingNFT = IERC721(_stakingNFT);
         rewardToken = IERC20(_rewardToken);
     }
@@ -66,31 +68,40 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
         _;
     }
 
-    function onERC721Received(address, address, uint256, bytes calldata) external pure override returns (bytes4){
-    return IERC721Receiver.onERC721Received.selector;
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
     }
 
     // Stake an NFT to start earning rewards
     // parameter:  tokenId The ID of the NFT to stake
-    function stake(uint256 tokenId) external nonReentrant whenNotPaused updateReward(msg.sender) {
+    function stake(
+        uint256 tokenId
+    ) external nonReentrant whenNotPaused updateReward(msg.sender) {
         require(tokenOwner[tokenId] == address(0), "NFT already staked");
-        
+
         userInfo[msg.sender].stakedTokenIds.push(tokenId);
         tokenOwner[tokenId] = msg.sender;
         totalStaked++;
-        
+
         if (userInfo[msg.sender].lastClaimTime == 0) {
             userInfo[msg.sender].lastClaimTime = block.timestamp;
         }
         userInfo[msg.sender].stakedAt = block.timestamp;
-        
+
         stakingNFT.safeTransferFrom(msg.sender, address(this), tokenId);
-        
+
         emit Staked(msg.sender, tokenId);
     }
 
-    function getStakedTokenIds(address user) external view returns (uint256[] memory) {
-    return userInfo[user].stakedTokenIds;
+    function getStakedTokenIds(
+        address user
+    ) external view returns (uint256[] memory) {
+        return userInfo[user].stakedTokenIds;
     }
 
     // Calculate total rewards earned by a user
@@ -100,24 +111,33 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
         User memory user = userInfo[account];
         uint256 numNFTs = user.stakedTokenIds.length;
         if (numNFTs == 0) return user.rewards;
-        
+
         uint256 timeStaked = block.timestamp - user.lastClaimTime;
-        uint256 newRewards = numNFTs * rewardRate * timeStaked / 1e18;
-        
+        uint256 newRewards = (numNFTs * rewardRate * timeStaked) / 1e18;
+
         return newRewards + user.rewards;
     }
 
     // Withdraw a specific staked NFT after cooling period
     // parameter:  tokenId The ID of the NFT to withdraw
-    function withdraw(uint256 tokenId) public nonReentrant whenNotPaused updateReward(msg.sender){
-        require(block.timestamp >= userInfo[msg.sender].stakedAt + coolTime, "Still locked");
-        
+    function withdraw(
+        uint256 tokenId
+    ) public nonReentrant whenNotPaused updateReward(msg.sender) {
+        require(
+            block.timestamp >= userInfo[msg.sender].stakedAt + coolTime,
+            "Still locked"
+        );
+
         _withdrawSingle(msg.sender, tokenId);
     }
 
-
     // Claim all accumulated rewards
-    function claimRewards() public  nonReentrant whenNotPaused updateReward(msg.sender){
+    function claimRewards()
+        public
+        nonReentrant
+        whenNotPaused
+        updateReward(msg.sender)
+    {
         uint256 reward = userInfo[msg.sender].rewards;
 
         if (reward > 0) {
@@ -125,7 +145,7 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
             rewardToken.safeTransfer(msg.sender, reward);
             emit RewardsClaimed(msg.sender, reward);
         }
-        reward = 0;
+        
     }
 
     // Withdraw a specific NFT and claim rewards in one transaction
@@ -139,9 +159,9 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
     // parameter:  tokenId The ID of the NFT to withdraw
     function emergencyWithdraw(uint256 tokenId) external nonReentrant {
         require(tokenOwner[tokenId] == msg.sender, "Not your NFT");
-        
+
         _withdrawSingle(msg.sender, tokenId);
-        
+
         userInfo[msg.sender].rewards = 0;
     }
 
@@ -153,7 +173,9 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
 
     //  Owner updates the reward rate
     // parameter:  _rewardRate New reward rate (tokens per NFT per second)
-    function setRewardRate(uint256 _rewardRate) external onlyOwner updateReward(address(0)) {
+    function setRewardRate(
+        uint256 _rewardRate
+    ) external onlyOwner updateReward(address(0)) {
         rewardRate = _rewardRate;
         emit RewardRateUpdated(_rewardRate);
     }
@@ -187,7 +209,7 @@ contract My_Staking_Contract is Ownable, ReentrancyGuard, Pausable, IERC721Recei
                 break;
             }
         }
-        
+
         delete tokenOwner[tokenId];
         totalStaked--;
         stakingNFT.safeTransferFrom(address(this), user, tokenId);
