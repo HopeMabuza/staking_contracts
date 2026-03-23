@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
@@ -13,9 +12,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol"; //to be able to transfer tokens
 
-// I want to use the ai contract because it is easy to folllow, but I want to use the time contract because it is more secure
-//user stakes NFT and after cooling time, user earns rewards, tokens or NFTs?
-//simple route, stake NFT and get tokens as rewards, also considering rewarding ERC1155 NFTs in the future
 
 contract My_Staking_Contract is
     Ownable,
@@ -42,7 +38,7 @@ contract My_Staking_Contract is
     //contract info
     uint256 public totalStaked;
     uint256 public coolTime = 2 minutes;
-    uint256 public rewardRate = 0.0013888e18; // Fixed reward rate
+    uint256 public rewardRate = 115740740740; // Fixed reward rate
 
     //events
     event Staked(address indexed user, uint256 tokenId);
@@ -52,7 +48,7 @@ contract My_Staking_Contract is
     event StakingDurationUpdated(uint256 newDuration);
 
     constructor(address _stakingNFT, address _rewardToken) Ownable() {
-        require(_stakingNFT != address(0), "Invalid staking token");
+        require(_stakingNFT != address(0), "Invalid staking NFT");
         require(_rewardToken != address(0), "Invalid reward token");
 
         stakingNFT = IERC721(_stakingNFT);
@@ -104,22 +100,20 @@ contract My_Staking_Contract is
         return userInfo[user].stakedTokenIds;
     }
 
-    // Calculate total rewards earned by a user
-    // parameter:  account The address to check rewards for
-    // return : Total rewards earned (pending + accumulated)
+    // Calculate total rewards earned per staked token
+    //1 min = 0.00694 tokens, 10 min = 0.0694 tokens, 1 hr = 0.4167 token, 1 day = 10 tokens
     function calculateRewards(address account) public view returns (uint256) {
         User memory user = userInfo[account];
         uint256 numNFTs = user.stakedTokenIds.length;
         if (numNFTs == 0) return user.rewards;
 
         uint256 timeStaked = block.timestamp - user.lastClaimTime;
-        uint256 newRewards = (numNFTs * rewardRate * timeStaked) / 1e18;
+        uint256 newRewards = (numNFTs * rewardRate * timeStaked);
 
         return newRewards + user.rewards;
     }
 
     // Withdraw a specific staked NFT after cooling period
-    // parameter:  tokenId The ID of the NFT to withdraw
     function withdraw(
         uint256 tokenId
     ) public nonReentrant whenNotPaused updateReward(msg.sender) {
@@ -149,14 +143,12 @@ contract My_Staking_Contract is
     }
 
     // Withdraw a specific NFT and claim rewards in one transaction
-    // parameter:  tokenId The ID of the NFT to withdraw
     function withdrawAndClaim(uint256 tokenId) external {
         withdraw(tokenId);
         claimRewards();
     }
 
     //  Emergency withdraw a specific NFT without rewards or cooling period
-    // parameter:  tokenId The ID of the NFT to withdraw
     function emergencyWithdraw(uint256 tokenId) external nonReentrant {
         require(tokenOwner[tokenId] == msg.sender, "Not your NFT");
 
@@ -166,13 +158,11 @@ contract My_Staking_Contract is
     }
 
     //  Owner deposits reward tokens into the contract
-    // parameter:  amount Amount of reward tokens to deposit
     function fundRewards(uint256 amount) external onlyOwner {
         rewardToken.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     //  Owner updates the reward rate
-    // parameter:  _rewardRate New reward rate (tokens per NFT per second)
     function setRewardRate(
         uint256 _rewardRate
     ) external onlyOwner updateReward(address(0)) {
@@ -181,7 +171,6 @@ contract My_Staking_Contract is
     }
 
     //  Owner updates the cooling time period
-    // parameter:  _coolTime New cooling time in seconds
     function setCoolTime(uint256 _coolTime) external onlyOwner {
         coolTime = _coolTime;
         emit StakingDurationUpdated(_coolTime);
@@ -198,8 +187,6 @@ contract My_Staking_Contract is
     }
 
     //  Internal helper to withdraw a single NFT
-    // parameter:  user The address of the user
-    // parameter:  tokenId The ID of the NFT to withdraw
     function _withdrawSingle(address user, uint256 tokenId) internal {
         uint256[] storage stakedIds = userInfo[user].stakedTokenIds;
         for (uint256 i = 0; i < stakedIds.length; i++) {

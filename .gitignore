@@ -1,2 +1,5 @@
 .env
 cache
+coverage
+node_module
+coverage.json
