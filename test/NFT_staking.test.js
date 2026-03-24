@@ -236,16 +236,12 @@ describe("Test NFT Staking", function(){
             expect(balanceAfter - balanceBefore).to.be.gte(ethers.parseUnits("0.034", 18));
         });
 
-        it("Should return 0 rewards when claiming immediately after staking", async function(){
+        it("Should revert when claiming before coolTime", async function(){
             const tokenIds = await mintNFTs(staker1, 1);
             await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
             await nftStaking.connect(staker1).stake(tokenIds[0]);
 
-            const balanceBefore = await rewardToken.balanceOf(staker1.address);
-            await nftStaking.connect(staker1).claimRewards();
-            const balanceAfter = await rewardToken.balanceOf(staker1.address);
-            // Claimed immediately — 0 or negligible seconds elapsed
-            expect(balanceAfter - balanceBefore).to.be.lte(ethers.parseUnits("0.001", 18));
+            await expect(nftStaking.connect(staker1).claimRewards()).to.be.revertedWith("Still locked");
         });
     });
 
