@@ -13,7 +13,7 @@ module.exports = {
     },
     sepolia: {
       url: process.env.SEPOLIA_RPC_URL,
-      accounts: [process.env.ADMIN_PRIVATE_KEY],
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY],
       chainId: 11155111
     }
   },

@@ -28,7 +28,8 @@ describe("Test NFT Staking", function(){
 
         //deploy staking contract
         const NFTStaking = await ethers.getContractFactory("My_Staking_Contract");
-        nftStaking = await NFTStaking.deploy(nftAddress, rewardTokenAddress);
+        const rate = ethers.parseUnits("0.00694", 18);
+        nftStaking = await NFTStaking.deploy(nftAddress, rewardTokenAddress, rate);
         await nftStaking.waitForDeployment();
 
         //fund staking contract with rewards
@@ -158,7 +159,8 @@ describe("Test NFT Staking", function(){
 
             await increaseTime(200);
             const rewards = await nftStaking.calculateRewards(staker1.address);
-            expect(rewards).to.be.gte(200);
+            // 200 seconds ≈ 3.33 mins * 0.00694 tokens = ~0.023 tokens
+            expect(rewards).to.be.gte(ethers.parseUnits("0.02", 18));
 
             await nftStaking.connect(staker1).emergencyWithdraw(tokenIds[0]);
             const userInfoAfter = await nftStaking.userInfo(staker1.address);
@@ -183,7 +185,8 @@ describe("Test NFT Staking", function(){
 
             expect(await nft.balanceOf(staker1.getAddress())).to.equal(1);
             expect(await nftStaking.totalStaked()).to.equal(0);
-            expect(balanceAfter - balanceBefore).to.be.gte(120);
+            // 120 seconds = 2 mins * 0.00694 tokens = ~0.01388 tokens
+            expect(balanceAfter - balanceBefore).to.be.gte(ethers.parseUnits("0.013", 18));
         });
 
         it("Should revert when trying to withdrawAndClaim before coolTime", async function(){
@@ -206,12 +209,13 @@ describe("Test NFT Staking", function(){
 
             await increaseTime(120);
             const calculatedRewards = await nftStaking.calculateRewards(staker1.address);
-            expect(calculatedRewards).to.be.gte(120);
+            // 120 seconds = 2 mins * 0.00694 tokens = ~0.01388 tokens
+            expect(calculatedRewards).to.be.gte(ethers.parseUnits("0.013", 18));
 
             const balanceBefore = await rewardToken.balanceOf(staker1.address);
             await nftStaking.connect(staker1).claimRewards();
             const balanceAfter = await rewardToken.balanceOf(staker1.address);
-            expect(balanceAfter - balanceBefore).to.be.gte(120);
+            expect(balanceAfter - balanceBefore).to.be.gte(ethers.parseUnits("0.013", 18));
             
             const userRewardsAfter = await nftStaking.userInfo(staker1.address);
             expect(userRewardsAfter.rewards).to.equal(0);          
@@ -228,12 +232,11 @@ describe("Test NFT Staking", function(){
             await nftStaking.connect(staker1).claimRewards();
             
             const balanceAfter = await rewardToken.balanceOf(staker1.address);
-            expect(balanceAfter - balanceBefore).to.be.gte(300);
+            // 300 seconds = 5 mins * 0.00694 tokens = ~0.0347 tokens
+            expect(balanceAfter - balanceBefore).to.be.gte(ethers.parseUnits("0.034", 18));
         });
 
         it("Should return 0 rewards when claiming immediately after staking", async function(){
-            await nftStaking.connect(owner).setRewardRate(1);
-
             const tokenIds = await mintNFTs(staker1, 1);
             await nft.connect(staker1).setApprovalForAll(nftStaking.target, true);
             await nftStaking.connect(staker1).stake(tokenIds[0]);
@@ -241,8 +244,8 @@ describe("Test NFT Staking", function(){
             const balanceBefore = await rewardToken.balanceOf(staker1.address);
             await nftStaking.connect(staker1).claimRewards();
             const balanceAfter = await rewardToken.balanceOf(staker1.address);
-            
-            expect(balanceAfter - balanceBefore).to.be.lte(1);
+            // Claimed immediately — 0 or negligible seconds elapsed
+            expect(balanceAfter - balanceBefore).to.be.lte(ethers.parseUnits("0.001", 18));
         });
     });
 

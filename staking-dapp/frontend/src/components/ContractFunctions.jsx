@@ -6,7 +6,7 @@ import {
   callWriteFunction,
   formatOutput,
 } from '../contract';
-import ContractABI from '../abi/ContractABI.json';
+import ContractABI from '../abi/My_Staking_Contract.json';
 import { CONTRACT_ADDRESS } from '../config';
 
 const ContractFunctions = ({

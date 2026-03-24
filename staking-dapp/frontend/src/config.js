@@ -7,11 +7,11 @@
  */
 
 // Staking Contract Address - Update this with your deployed My_Staking_Contract address
-export const CONTRACT_ADDRESS = '0x5EC985758d7aaD458E53F1e16313b6EaE602b155';
+export const CONTRACT_ADDRESS = '0xfE0A4F557212d38335bCD17ce4a03facb2aAe1D9';
 
 // NFT Contract Address - Update this with your deployed NFT contract address
 // You can find this in the deployment output when you ran: npx hardhat run scripts/deploy.js
-export const NFT_CONTRACT_ADDRESS = '0x914BB095EB4Ed1458e3f1175Db573A81091E21c2'; // ⚠️ CHANGE THIS
+export const NFT_CONTRACT_ADDRESS = '0x7dF1b504900D18549bB91Ba7c6406E67D9117f87';
 
 // Add other contract configurations here as needed
 export const CONTRACT_CONFIG = {

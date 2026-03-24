@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import NFTABI from '../abi/NFTABI.json';
+import NFTABI from '../abi/NFT.json';
 import { NFT_CONTRACT_ADDRESS } from '../config';
 
 const MintNFT = ({ account, signer, transactionStatus, onTransactionUpdate }) => {
@@ -21,7 +21,7 @@ const MintNFT = ({ account, signer, transactionStatus, onTransactionUpdate }) =>
 
   const fetchNFTData = async () => {
     try {
-      const nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFTABI, signer);
+      const nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFTABI.abi, signer);
 
       // Get cost
       const costBigInt = await nftContract.cost();
@@ -66,7 +66,7 @@ const MintNFT = ({ account, signer, transactionStatus, onTransactionUpdate }) =>
 
       const nftContract = new ethers.Contract(
         NFT_CONTRACT_ADDRESS,
-        NFTABI,
+        NFTABI.abi,
         signer
       );
 

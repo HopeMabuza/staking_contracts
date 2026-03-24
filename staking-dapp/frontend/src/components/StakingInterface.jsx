@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { getContractInstance, callReadFunction, callWriteFunction, formatOutput } from '../contract';
-import ContractABI from '../abi/ContractABI.json';
-import NFTABI from '../abi/NFTABI.json';
+import ContractABI from '../abi/My_Staking_Contract.json';
+import NFTABI from '../abi/NFT.json';
 import { CONTRACT_ADDRESS, NFT_CONTRACT_ADDRESS } from '../config';
 
 const StakingInterface = ({
@@ -14,11 +14,21 @@ const StakingInterface = ({
   onTransactionError,
 }) => {
   const [tokenId, setTokenId] = useState('');
-  const [userRewards, setUserRewards] = useState('0');
+  const [userRewards, setUserRewards] = useState('0.0');
+  const [userRewardsRaw, setUserRewardsRaw] = useState(BigInt(0));
   const [stakedTokens, setStakedTokens] = useState([]);
   const [totalStaked, setTotalStaked] = useState('0');
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [coolTime, setCoolTime] = useState(0);       // cooldown duration in seconds
+  const [stakedAt, setStakedAt] = useState(0);       // unix timestamp when user staked
+  const [now, setNow] = useState(Math.floor(Date.now() / 1000));
+
+  // Tick every second for the countdown
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch user data
   const refreshUserData = async () => {
@@ -26,12 +36,14 @@ const StakingInterface = ({
     
     setRefreshing(true);
     try {
-      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI, provider);
+      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI.abi, provider);
 
       // Get rewards
       const rewordsResult = await callReadFunction(contract, 'calculateRewards', [account]);
       if (rewordsResult.success) {
-        setUserRewards(formatOutput(rewordsResult.data));
+        const raw = BigInt(rewordsResult.data.toString());
+        setUserRewardsRaw(raw);
+        setUserRewards(ethers.formatEther(raw));
       }
 
       // Get staked token IDs
@@ -46,6 +58,13 @@ const StakingInterface = ({
       if (totalResult.success) {
         setTotalStaked(totalResult.data.toString());
       }
+
+      // Get coolTime and stakedAt
+      const coolResult = await callReadFunction(contract, 'coolTime', []);
+      if (coolResult.success) setCoolTime(Number(coolResult.data));
+
+      const userResult = await callReadFunction(contract, 'userInfo', [account]);
+      if (userResult.success) setStakedAt(Number(userResult.data.stakedAt));
     } catch (error) {
       console.error('Error refreshing data:', error);
     } finally {
@@ -53,9 +72,11 @@ const StakingInterface = ({
     }
   };
 
-  // Refresh data on account change
+  // Refresh data on account change + poll every 15 seconds to update rewards
   useEffect(() => {
     refreshUserData();
+    const poll = setInterval(refreshUserData, 15000);
+    return () => clearInterval(poll);
   }, [account, provider]);
 
   // Check and request NFT approval
@@ -63,7 +84,7 @@ const StakingInterface = ({
     try {
       const nftContract = new ethers.Contract(
         NFT_CONTRACT_ADDRESS,
-        NFTABI,
+        NFTABI.abi,
         signer
       );
 
@@ -106,7 +127,7 @@ const StakingInterface = ({
 
       // Step 2: Proceed with staking
       onTransactionStart();
-      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI, signer);
+      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI.abi, signer);
       const result = await callWriteFunction(contract, 'stake', [tokenId]);
 
       if (result.success) {
@@ -141,7 +162,7 @@ const StakingInterface = ({
       setLoading(true);
       onTransactionStart();
 
-      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI, signer);
+      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI.abi, signer);
       const result = await callWriteFunction(contract, 'withdraw', [tokenId]);
 
       if (result.success) {
@@ -174,7 +195,7 @@ const StakingInterface = ({
       setLoading(true);
       onTransactionStart();
 
-      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI, signer);
+      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI.abi, signer);
       const result = await callWriteFunction(contract, 'withdrawAndClaim', [tokenId]);
 
       if (result.success) {
@@ -197,7 +218,7 @@ const StakingInterface = ({
       setLoading(true);
       onTransactionStart();
 
-      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI, signer);
+      const contract = getContractInstance(CONTRACT_ADDRESS, ContractABI.abi, signer);
       const result = await callWriteFunction(contract, 'claimRewards', []);
 
       if (result.success) {
@@ -212,6 +233,10 @@ const StakingInterface = ({
       setLoading(false);
     }
   };
+
+  const isCoolingDown = stakedAt > 0 && (stakedAt + coolTime) > now;
+  const remaining = Math.max(0, (stakedAt + coolTime) - now);
+  const countdownStr = `${Math.floor(remaining / 3600)}h ${Math.floor((remaining % 3600) / 60)}m ${remaining % 60}s`;
 
   return (
     <div className="staking-interface">
@@ -237,9 +262,9 @@ const StakingInterface = ({
           <button
             className="btn btn-success"
             onClick={handleClaimRewards}
-            disabled={loading || userRewards === '0'}
+            disabled={loading || userRewardsRaw === BigInt(0) || isCoolingDown}
           >
-            {loading ? 'Claiming...' : '✓ Claim Rewards'}
+            {loading ? 'Claiming...' : isCoolingDown ? `🔒 ${countdownStr}` : '✓ Claim Rewards'}
           </button>
         </div>
 
@@ -248,7 +273,22 @@ const StakingInterface = ({
           <div className="stat-value">{stakedTokens.length}</div>
           <div className="token-list">
             {stakedTokens.length > 0 ? (
-              stakedTokens.map(id => <span key={id} className="token-badge">#{id}</span>)
+              stakedTokens.map(id => {
+                const unlockAt = stakedAt + coolTime;
+                const remaining = unlockAt - now;
+                return (
+                  <div key={id} className="token-badge-row">
+                    <span className="token-badge">#{id}</span>
+                    {remaining > 0 ? (
+                      <span className="cooldown-timer">
+                        🔒 {Math.floor(remaining / 3600)}h {Math.floor((remaining % 3600) / 60)}m {remaining % 60}s
+                      </span>
+                    ) : (
+                      <span className="cooldown-ready">✅ Ready</span>
+                    )}
+                  </div>
+                );
+              })
             ) : (
               <span className="empty-text">No NFTs staked</span>
             )}
@@ -293,17 +333,17 @@ const StakingInterface = ({
           <button
             className="btn btn-warning btn-large"
             onClick={handleWithdraw}
-            disabled={loading}
+            disabled={loading || isCoolingDown}
           >
-            {loading ? ' Withdrawing...' : ' Withdraw NFT'}
+            {loading ? ' Withdrawing...' : isCoolingDown ? `🔒 ${countdownStr}` : ' Withdraw NFT'}
           </button>
 
           <button
             className="btn btn-success btn-large"
             onClick={handleWithdrawAndClaim}
-            disabled={loading}
+            disabled={loading || isCoolingDown}
           >
-            {loading ? ' Processing...' : ' Withdraw & Claim'}
+            {loading ? ' Processing...' : isCoolingDown ? `🔒 ${countdownStr}` : ' Withdraw & Claim'}
           </button>
         </div>
 

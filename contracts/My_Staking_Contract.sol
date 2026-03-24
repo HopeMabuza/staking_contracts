@@ -38,7 +38,7 @@ contract My_Staking_Contract is
     //contract info
     uint256 public totalStaked;
     uint256 public coolTime = 2 minutes;
-    uint256 public rewardRate = 115740740740; // Fixed reward rate
+    uint256 public rewardRate; // Fixed reward rate
 
     //events
     event Staked(address indexed user, uint256 tokenId);
@@ -47,12 +47,13 @@ contract My_Staking_Contract is
     event RewardRateUpdated(uint256 newRate);
     event StakingDurationUpdated(uint256 newDuration);
 
-    constructor(address _stakingNFT, address _rewardToken) Ownable() {
+    constructor(address _stakingNFT, address _rewardToken, uint256 rate) Ownable() {
         require(_stakingNFT != address(0), "Invalid staking NFT");
         require(_rewardToken != address(0), "Invalid reward token");
 
         stakingNFT = IERC721(_stakingNFT);
         rewardToken = IERC20(_rewardToken);
+        rewardRate = rate;
     }
 
     // Modifier to update rewards
@@ -108,7 +109,7 @@ contract My_Staking_Contract is
         if (numNFTs == 0) return user.rewards;
 
         uint256 timeStaked = block.timestamp - user.lastClaimTime;
-        uint256 newRewards = (numNFTs * rewardRate * timeStaked);
+        uint256 newRewards = (numNFTs * rewardRate * timeStaked) / 60;
 
         return newRewards + user.rewards;
     }
@@ -132,6 +133,11 @@ contract My_Staking_Contract is
         whenNotPaused
         updateReward(msg.sender)
     {
+        require(
+            block.timestamp >= userInfo[msg.sender].stakedAt + coolTime,
+            "Still locked"
+        );
+
         uint256 reward = userInfo[msg.sender].rewards;
 
         if (reward > 0) {
